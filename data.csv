@@ -1,8 +1,8 @@
 id,name,symptom
-1,hello,1
-2,hello,1
-3,hello,1
-4,hello,1
+1,overHeating,1
+2,engineVibration,1
+3,harmonicBalancer,1
+4,faultyEngineCoolingFan,1
 5,hello,1
 6,hello,1
 7,hello,1

@@ -11,7 +11,7 @@ bayesnet = BayesModel(dataa)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return 'Sunny Chutiya'
 
 
 @app.route('/nodes')
@@ -25,7 +25,7 @@ def get_preds():
     evidenceList = []
     for req in requestdata["evidence"]:
         evidenceList.append(req)
-    print(evidenceList)
+    bayesnet.getAllProbabilities(evidenceList)
     return ""
 
 
@@ -35,9 +35,10 @@ def get_single_pred():
     evidence_list = []
     for req in requestdata["evidence"]:
         evidence_list.append(req)
-        print(bayesnet.get_name_from_id(req))
-    query= requestdata["query"]
-    print(evidence_list,query)
+    query_list= []
+    for q in requestdata["query"]:
+        query_list.append(q)
+    bayesnet.getAskedProbability(evidence_list,query_list)
     return ""
 
 
