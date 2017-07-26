@@ -25,8 +25,8 @@ def get_preds():
     evidenceList = []
     for req in requestdata["evidence"]:
         evidenceList.append(req)
-    bayesnet.getAllProbabilities(evidenceList)
-    return ""
+
+    return bayesnet.getAllProbabilities(evidenceList)
 
 
 @app.route('/pred', methods=['POST'])
@@ -38,8 +38,7 @@ def get_single_pred():
     query_list= []
     for q in requestdata["query"]:
         query_list.append(q)
-    bayesnet.getAskedProbability(evidence_list,query_list)
-    return ""
+    return bayesnet.getAskedProbability(evidence_list,query_list)
 
 
 if __name__ == '__main__':

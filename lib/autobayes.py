@@ -1,8 +1,16 @@
 
 #importing the library
+import json
+
 from pgmpy.models import BayesianModel
 from pgmpy.factors import TabularCPD
 from pgmpy.inference import VariableElimination
+from itertools import product
+
+from pgmpy.extern import six
+
+from lib.factorout import FactorDisp, FactorWithName
+
 
 class BayesModel:
     """
@@ -34,18 +42,19 @@ class BayesModel:
             for  value in activeTrailNodes:
                 nodes.append(value)
             print("printing..", nodes)
-
+            output = []
             for j in range(len(nodes)):
                 print(nodes[j])
 
                 if nodes[j] != user_evidence[i]:
                     q = self.infer.query(variables=[nodes[j]], evidence={user_evidence[i]: 1})
-                    print(q[nodes[j]])
-
+                    output.append(FactorWithName(nodes[j], self.convertFactorToDict(q[nodes[j]])))
+        return json.dumps(output,default=self.obj_dict)
 
     # function for getting the CPDs for selected nodes with
     def getAskedProbability(self,evidences, queries):
         user_evidence=[]
+        output = []
         for evidence in evidences:
             user_evidence.append(self.get_name_from_id(evidence))
 
@@ -57,9 +66,9 @@ class BayesModel:
             for j in range(len(query_variable)):
                 q = self.infer.query(variables=[query_variable[j]], evidence={user_evidence[i]: 1})
                 print(query_variable[j] + " Given " + user_evidence[i])
-                print(q[query_variable[j]])
+                output.append(FactorWithName(query_variable[j], self.convertFactorToDict(q[query_variable[j]])))
 
-
+        return json.dumps(output, default=self.obj_dict)
 
     def createModel(self):
         return BayesianModel([('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),
@@ -306,6 +315,24 @@ class BayesModel:
                        cpd_fuelSystemCleaning, cpd_fuelPumpReplacement, cpd_badIgnitionSytem, cpd_badTimingChain,
                        cpd_brokenMissingFanAssembly, cpd_noSpark, cpd_ignitionCoilForSpark)
 
+    def obj_dict(self,obj):
+        return obj.__dict__
 
+    def convertFactorToDict(self,factor):
+        dic = {}
+        string_header = list(map(lambda x: six.text_type(x), factor.scope()))
+        string_header.append('{phi_or_p}({variables})'.format(phi_or_p="phi",
+                                                              variables=','.join(string_header)))
 
+        value_index = 0
+        factor_table = []
+        factordisp = []
+        for prob in product(*[range(card) for card in factor.cardinality]):
+            prob_list = ["{s}_{d}".format(s=list(factor.variables)[i], d=prob[i])
+                         for i in range(len(factor.variables))]
+            # prob_list.append(factor.values.ravel()[value_index])
 
+            # factor_table.append(prob_list)
+            factordisp.append(FactorDisp(prob_list, factor.values.ravel()[value_index]))
+            value_index += 1
+        return factordisp
