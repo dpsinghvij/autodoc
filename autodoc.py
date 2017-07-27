@@ -11,7 +11,7 @@ bayesnet = BayesModel(dataa)
 
 @app.route('/')
 def hello_world():
-    return 'Sunny Chutiya'
+    return 'Sunny handsome'
 
 
 @app.route('/nodes')
@@ -42,4 +42,4 @@ def get_single_pred():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5001)
