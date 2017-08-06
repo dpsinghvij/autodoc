@@ -144,3 +144,6 @@ fabric.properties
 lib/__pycache__/
 
 
+!/templates/index1.html
+!/templates/
+!/static/

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from lib.data import Data
 from lib.autobayes import BayesModel
 import jsonpickle
@@ -8,11 +8,13 @@ app = Flask(__name__)
 dataa = Data("data.csv")
 bayesnet = BayesModel(dataa)
 
-
 @app.route('/')
-def hello_world():
-    return 'Sunny handsome'
+def index():
+    return render_template('index1.html')
 
+@app.route('/output.html')
+def output():
+    return render_template('output.html')
 
 @app.route('/nodes')
 def get_nodes():
