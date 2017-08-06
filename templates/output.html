@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>output</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2 class="output_header">Possible Problems</h2>
+
+<h3 class="output_sub_header">Here's what may be causing your car problems. Learn more before you start troubleshooting</h3>
+
+
+<div class="problem_solutions">
+	<div class="problem_solutions_header">
+
+		<div class="problem_solutions_one">
+			<span class="span_problems">Problems</span>
+		</div>
+
+		<div class="problem_solutions_two">
+			<span class="span_problems">Probabilities</span>
+		</div>
+
+	</div>
+	<div class="problem_solutions_body">
+		<div class="problem_solutions_body_left">
+			<span id="abc"></span><br>
+			<span>sasas</span><br>
+			<span>dsdsdsd</span><br>
+			<span>sasasasa</span>
+		</div>
+
+		<div class="problem_solutions_body_right">
+			<span>0.65</span><br>
+			<span>0.15</span><br>
+			<span>0.2</span>
+		</div>
+	</div>
+</div>
+
+</body>
+
+<script>
+
+	function getQueryParams(name) {
+   qs = location.search;
+
+   var params = [];
+   var tokens;
+   var re = /[?&]?([^=]+)=([^&]*)/g;
+
+   while (tokens = re.exec(qs))
+   {
+       if (decodeURIComponent(tokens[1]) == name)
+       params.push(decodeURIComponent(tokens[2]));
+   }
+
+   return params;
+}
+var tasnia = getQueryParams('car_problem');
+alert(tasnia);
+
+	/*urlParam = function(name){
+		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+		if (results==null){
+		   return null;
+		}
+		else{
+		   return decodeURI(results[1]) || 0;
+		}
+	}
+	alert(urlParam('car_problem'));
+
+	$( document ).ready(function() {
+		console.log(urlParam('car_problem'));
+		$('#abc').text("The value of the problem is " + $.urlParam('car_problem'));
+	});*/
+ </script>
+
+</html>
