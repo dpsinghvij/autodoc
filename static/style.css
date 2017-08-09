@@ -1,0 +1,172 @@
+.main_div
+{
+	text-align: center;
+	display: none;
+	margin: 20px;
+	text-align: left;
+}
+.select_problem
+{
+	font-size: 32px;
+	color: #222;
+	font-weight: 100;
+}
+.problem_name
+{
+	font-size: 20px;
+    font-weight: 300;
+    line-height: 28px;
+}
+input[type=submit]
+{
+	cursor: pointer;
+	height: 34px;
+	background-color: #0173bd;
+	background-image: none !important;
+    color: #fff !important;
+    border: none !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    padding: 7px 30px !important;
+	margin: 10px;
+	border-radius: 3px;
+}
+input[type=button]
+{
+	cursor: pointer;
+	height: 34px;
+	background-color: #0173bd;
+	background-image: none !important;
+    color: #fff !important;
+    border: none !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    padding: 7px 30px !important;
+	margin: 10px;
+	border-radius: 3px;
+}
+.problem_name_div
+{
+
+}
+#main_header
+{
+	width: 50%;
+	text-align: center;
+	margin: 0 auto;
+}
+.reasons_div
+{
+	float: left;
+	width: 48%;
+}
+#result
+{
+	float: right;
+	width: 48%;
+	border: 1px solid white;
+}
+#result_two
+{
+	float: right;
+	width: 48%;
+	border: 1px solid white;
+}
+#result_two::before{
+   content: "\200B";
+}
+#result::before{
+   content: "\200B";
+}
+.reasons_symptoms
+{
+	display: none;
+	margin: 20px;
+}
+.main_body_reasons
+{
+	overflow: hidden;
+}
+.main_body_symptoms
+{
+	overflow: hidden;
+}
+.symptoms_div
+{
+	float: left;
+	width: 48%;
+}
+#result_three
+{
+	float: right;
+	width: 48%;
+	border: 1px solid white;
+}
+.main_reasons_div
+{
+	overflow: hidden;
+}
+.main_div_next
+{
+	float: right;
+}
+.reasons_symptoms_next
+{
+	float: right;
+}
+.output_header
+	{
+		font-size: 32px;
+		color: #222;
+		font-weight: 100;
+		text-align: center;
+	}
+	.output_sub_header
+	{
+		font-size: 22px;
+		color: #222;
+		font-weight: 100;
+		text-align: center;
+		color: #04497b;
+		font-weight: bold;
+	}
+	.problem_solutions
+	{
+		width: 70%;
+		margin: 0 auto;
+		border: 1px solid #d7d7d7;
+	}
+	.problem_solutions_one
+	{
+		width: 60%;
+		float: left;
+	}
+	.problem_solutions_header
+	{
+		border-bottom: 1px solid #d7d7d7;
+		background-color: #f7f7f7;
+		padding: 10px 20px;
+		overflow: hidden;
+	}
+	.span_problems
+	{
+		color: #7d7d7d;
+		font-size: 18px;
+		font-weight: bold;
+	}
+	.problem_solutions_body_left
+	{
+		width: 60%;
+		float: left;
+	}
+	.problem_solutions_body
+	{
+		overflow: hidden;
+		padding: 10px;
+		font-size: 16px;
+		color: #333;
+	}

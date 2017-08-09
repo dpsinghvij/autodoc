@@ -142,5 +142,8 @@ fabric.properties
 .gitignore
 .idea/workspace.xml
 lib/__pycache__/
-static/
-templates/
+
+
+!/templates/index1.html
+!/templates/
+!/static/
