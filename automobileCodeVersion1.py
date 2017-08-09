@@ -316,10 +316,17 @@ def getAskedProbability(user_evidence, query_variable):
 user_evidence = ['overHeating', 'engineVibration']
 query_variable = ['harmonicBalancer', 'faultyEngineCoolingFan']
 
+model.get_cpds('harmonicBalancer').values= (model.get_cpds('harmonicBalancer').values+model.get_cpds('harmonicBalancer').values)/3
+print(model.get_cpds('harmonicBalancer').values)
+
+"""from pgmpy.estimators import BayesianEstimator
 
 
+data = pd.read_csv('allFiles/alldata.csv')
+
+model.fit(data, estimator=BayesianEstimator, prior_type="BDeu") # default equivalent_sample_size=5
 #getAllProbabilities(user_evidence)
-#getAskedProbability(user_evidence, query_variable)
+#getAskedProbability(user_evidence, query_variable)"""
 
 
 
