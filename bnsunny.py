@@ -1,13 +1,42 @@
 #final DAG implementation 
 
-#importing the library
+#importing the library 
+
+from random import *
+import csv
 from pgmpy.models import BayesianModel
 from pgmpy.factors.discrete import TabularCPD
+
+from collections import defaultdict
 import numpy as np
-import math
+import pandas as pd
+
+from pgmpy.estimators import BayesianEstimator
+
 
 #creating the nodes and edges
-model = BayesianModel([('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),('noSpark', 'sparkPlug'), 
+model_expert = BayesianModel([('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),('noSpark', 'sparkPlug'), 
+                       ('cranksNormallyNotStarting', 'badTimingChain'), ('crankSlow', 'weakBattery'), ('crankSlow', 'badStarter'), 
+                       ('crankSlow', 'corrodedBatteryTerminal'), 
+                      ('vehicleBackFiring', 'badTimingChain'), ('vehicleBackFiring', 'badIgnitionSytem'), 
+                       ('oneStrongClickOrKnock', 'badStarter'), ('oneStrongClickOrKnock', 'pistonNotWorking'), 
+                       ('spinningWhinningOrGearGrinding', 'badStarter'), ('repeatingClickSound', 'weakBattery'), 
+                      ('repeatingClickSound', 'badStarter'), ('repeatingClickSound', 'corrodedBatteryTerminal'), 
+                      ('engineMisFiring', 'wornDistributor'), ('engineMisFiring', 'badIgnitionSytem'), 
+                      ('engineVibration', 'harmonicBalancer'), ('engineVibration', 'wornEngineMounts'), 
+                       ('vehicleRunsHot', 'faultyEngineCoolingFan'), ('vehicleRunsHot', 'brokenMissingFanAssembly'), 
+                       ('overHeating', 'stuckThermostat'), ('overHeating', 'lowCoolantLevel'), ('overHeating', 'faultyEngineCoolingFan'), 
+                      ('carbueratorStalling', 'badCarbuerator'), ('idleFluctuates', 'ignitionCoilForSpark'), 
+                      ('idleFluctuates', 'cloggedAirFilter'), ('ignitionCoilForSpark', 'sparkPlug'), 
+                      ('engineHesitation', 'faultyFuelFilter'), ('engineHesitation', 'cloggedAirFilter'), 
+                      ('stalling', 'fuelPumpReplacement'), ('stalling', 'ignitionCoilForSpark'), 
+                       ('roughRunningEngine', 'fuelSystemCleaning'), ('roughRunningEngine', 'ignitionCoilForSpark'), 
+                      ('highIdle', 'faultyFuelFilter'), ('highIdle', 'vacuumLeaks'), ('ignitionMisFire', 'engineTuneUp'), ('ignitionMisFire', 'sparkPlug'), 
+                      ('ignitionMisFire', 'ignitionCoilForSpark')])
+
+
+
+model_data = BayesianModel([('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),('noSpark', 'sparkPlug'), 
                        ('cranksNormallyNotStarting', 'badTimingChain'), ('crankSlow', 'weakBattery'), ('crankSlow', 'badStarter'), 
                        ('crankSlow', 'corrodedBatteryTerminal'), 
                       ('vehicleBackFiring', 'badTimingChain'), ('vehicleBackFiring', 'badIgnitionSytem'), 
@@ -226,8 +255,7 @@ cpd_ignitionCoilForSpark = TabularCPD(variable='ignitionCoilForSpark', variable_
                              evidence_card = [2, 2, 2, 2])
 
 
-#adding CPDs to the model
-model.add_cpds(cpd_carbueratorStalling, cpd_crankSlow, cpd_cranksNormallyNotStarting, 
+model_expert.add_cpds(cpd_carbueratorStalling, cpd_crankSlow, cpd_cranksNormallyNotStarting, 
                cpd_engineHesitation, cpd_engineMisFiring, cpd_engineVibration, cpd_highIdle, cpd_idleFluctuates, 
                cpd_ignitionMisFire, cpd_oneStrongClickOrKnock, cpd_overHeating,  cpd_repeatingClickSound, 
                cpd_roughRunningEngine,  cpd_spinningWhinningOrGearGrinding, cpd_stalling, cpd_vehicleBackFiring,
@@ -238,94 +266,69 @@ model.add_cpds(cpd_carbueratorStalling, cpd_crankSlow, cpd_cranksNormallyNotStar
                cpd_fuelSystemCleaning, cpd_fuelPumpReplacement, cpd_badIgnitionSytem, cpd_badTimingChain, 
                cpd_brokenMissingFanAssembly, cpd_noSpark, cpd_ignitionCoilForSpark)
 
+model_expert.check_model()
 
-#validate model
-model.check_model()
-
-
-#applying inference
-
-from pgmpy.inference import VariableElimination
-infer = VariableElimination(model)
-
-def iterateNP(cpd):
-    it= np.nditer(cpd.values,flags=['multi_index'])
-    while not it.finished:
-        print("%f <%s>" % (it.value, it.multi_index))
-        index=[]
-        for y in it.multi_index:
-            temp=[]
-            temp.append(y)
-            index.append(temp)
-        lookup=''.join(str(x) for x in  np.asarray(it.multi_index)[1:])
-        num=10
-        x = 1/(1+math.exp(-((num*.01))-6))
-        weightdata =x/(1+x)
-        weightexpert=1-weightdata
-
-        it.iternext()
+#creating CSV files for all the nodes
+allNodes = model_data.nodes()
+print(len(allNodes))
+with open('allFiles/alldata.csv', 'a') as f:
+    writer = csv.writer(f)
+    writer.writerow((allNodes))
 
 
-
-iterateNP(cpd_badTimingChain)
-#function for getting all the CPDs with the node given as evidence
-def getAllProbabilities(user_evidence):
     
-    print(user_evidence)
+randBinList = lambda n: [randint(0,1) for b in range(1,n+1)]    
+for i in range(20):
+    data = randBinList(41)
+    with open('allFiles/alldata.csv', 'a') as f:
+        a = csv.writer(f, quoting=csv.QUOTE_ALL)
+        a.writerow(data)
     
-    for i in range(len(user_evidence)):
-        activeTrailNodes = model.active_trail_nodes(user_evidence[i])
-        print(activeTrailNodes)
+    
+    
+    
 
-        nodes = []
-        for value in activeTrailNodes:
-            nodes.append(value)
-        print("printing..", nodes) 
+
+
+data = pd.read_csv('allFiles/alldata.csv')
+
+model_data.fit(data, estimator=BayesianEstimator, prior_type="BDeu") # default equivalent_sample_size=5
+
+print(model_data.get_cpds('overHeating'))
+allNodes = model_data.nodes()
+
+
+#for i in range(len(allNodes)):
+#    print(model_data.get_cpds(allNodes[i]))
+
+path_to_file = "allFiles/alldata.csv"
+df = pd.read_csv(path_to_file)
+
+
+for i in range(len(allNodes)):
+    meAndMyParents = list(model_data._get_ancestors_of(allNodes[i]))
+    
+    if(len(meAndMyParents) == 1):
+        print("root node:-", allNodes[i])
+        df=df.groupby(meAndMyParents).agg({meAndMyParents[0]:'count'})
+        print(df)
+    else:
+        meAndMyParents.remove(allNodes[i])
+        print("child node:-", allNodes[i])
+        print(meAndMyParents)
+        #df=df.groupby(meAndMyParents).agg({allNodes[i]:'count'}).reset_index().rename(columns={allNodes[i]:'countsym'})
         
-            
-        for j in range(len(nodes)):
-            print(nodes[j])
         
-            
-            if nodes[j] == user_evidence[i]:
-                continue
-            else:    
-                q = infer.query(variables = [nodes[j]], evidence={user_evidence[i]: 1})
-                print(q[nodes[j]])
-              
+#print(model_expert.get_cpds('lowCoolantLevel'))
+#print(model_data.get_cpds('lowCoolantLevel'))
+
+
+#print(model_expert.get_cpds('lowCoolantLevel') + model_data.get_cpds('lowCoolantLevel'))
+
+#model_expert.add_cpds(model_expert.get_cpds('lowCoolantLevel') + model_data.get_cpds('lowCoolantLevel'))    
+#print(model_expert.get_cpds('lowCoolantLevel'))
+
     
-#function for getting the CPDs for selected nodes with 
-def getAskedProbability(user_evidence, query_variable):
     
-    for i in range(len(user_evidence)):
-        for j in range(len(query_variable)):
-            
-            q = infer.query(variables = [query_variable[j]], evidence={user_evidence[i]: 1})
-            print(query_variable[j] + " Given " + user_evidence[i])
-            print(q[query_variable[j]])
-            
-    
-
-
-
-
-#user_evidence = str(input("Please select evidence: "))
-#query_variable = str(input("Please select query variable: "))
-
-#dummy user evidence and query variable...this will be coming from user interface once the backend is connected with UI
-user_evidence = ['overHeating', 'engineVibration']
-query_variable = ['harmonicBalancer', 'faultyEngineCoolingFan']
-
-
-
-#getAllProbabilities(user_evidence)
-#getAskedProbability(user_evidence, query_variable)
-
-
-
-
-
-
-
-
+   
 

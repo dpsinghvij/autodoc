@@ -3,7 +3,7 @@
 import json
 
 from pgmpy.models import BayesianModel
-from pgmpy.factors import TabularCPD
+from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
 from itertools import product
 
@@ -39,7 +39,7 @@ class BayesModel:
             activeTrailNodes = self.model.active_trail_nodes(user_evidence[i])
             print(activeTrailNodes)
             nodes=[]
-            for  value in activeTrailNodes:
+            for key, value in activeTrailNodes.items():
                 nodes.append(value)
             print("printing..", nodes)
             output = []
