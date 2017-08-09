@@ -6,7 +6,7 @@ from pgmpy.models import BayesianModel
 from pgmpy.factors import TabularCPD
 from pgmpy.inference import VariableElimination
 from itertools import product
-
+from pgmpy.inference.EliminationOrder import MinFill, WeightedMinFill, MinWeight, MinNeighbours
 from pgmpy.extern import six
 
 from lib.factorout import FactorDisp, FactorWithName
@@ -28,31 +28,33 @@ class BayesModel:
         self.infer = VariableElimination(self.model)
         self.data = data
 
-    def getAllProbabilities(self,evidences):
+    def getAllProbabilities(self,evidences,algorithm= 'min_fill'):
 
         user_evidence= []
         for evidence in evidences:
             user_evidence.append(self.get_name_from_id(evidence))
-        print(user_evidence)
+        #print(user_evidence)
 
         for i in range(len(user_evidence)):
             activeTrailNodes = self.model.active_trail_nodes(user_evidence[i])
-            print(activeTrailNodes)
+            #print(activeTrailNodes)
             nodes=[]
             for  value in activeTrailNodes:
                 nodes.append(value)
-            print("printing..", nodes)
+            #print("printing..", nodes)
             output = []
             for j in range(len(nodes)):
-                print(nodes[j])
+                #print(nodes[j])
 
                 if nodes[j] != user_evidence[i]:
-                    q = self.infer.query(variables=[nodes[j]], evidence={user_evidence[i]: 1})
+                    ordering = self.get_elimination_order([nodes[j]],{user_evidence[i]: 1},algo= algorithm)
+                    print(ordering)
+                    q = self.infer.query(variables=[nodes[j]], evidence={user_evidence[i]: 1}, elimination_order=ordering)
                     output.append(FactorWithName(nodes[j], self.convertFactorToDict(q[nodes[j]])))
         return json.dumps(output,default=self.obj_dict)
 
     # function for getting the CPDs for selected nodes with
-    def getAskedProbability(self,evidences, queries):
+    def getAskedProbability(self,evidences, queries,algorithm= 'min_fill'):
         user_evidence=[]
         output = []
         for evidence in evidences:
@@ -64,11 +66,28 @@ class BayesModel:
 
         for i in range(len(user_evidence)):
             for j in range(len(query_variable)):
-                q = self.infer.query(variables=[query_variable[j]], evidence={user_evidence[i]: 1})
-                print(query_variable[j] + " Given " + user_evidence[i])
+                ordering = self.get_elimination_order([query_variable[j]], {user_evidence[i]: 1}, algo=algorithm)
+                print(ordering)
+                q = self.infer.query(variables=[query_variable[j]], evidence={user_evidence[i]: 1}, elimination_order=ordering)
                 output.append(FactorWithName(query_variable[j], self.convertFactorToDict(q[query_variable[j]])))
 
         return json.dumps(output, default=self.obj_dict)
+
+
+    def get_elimination_order(self,variables,evidence,algo='min_fill'):
+        elimination_order = list(set(self.infer.variables) -
+                                 set(variables) -
+                                 set(evidence.keys() if evidence else []))
+        if(algo=='min_fill'):
+            elimination_order= MinFill(self.model).get_elimination_order(elimination_order)
+        elif(algo=='min_weight'):
+            elimination_order = MinWeight(self.model).get_elimination_order(elimination_order)
+        elif(algo=='min_neighbor'):
+            elimination_order = MinNeighbours(self.model).get_elimination_order(elimination_order)
+        else:
+            elimination_order = WeightedMinFill(self.model).get_elimination_order(elimination_order)
+        return elimination_order
+
 
     def createModel(self):
         return BayesianModel([('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),
