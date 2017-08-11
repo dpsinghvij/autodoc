@@ -16,11 +16,13 @@
                     //data: $('form').serialize(),
                     type: 'GET',
                     success: function (response) {
-                        var response_obj = JSON.parse(response)
-                        var names = []
+                        var response_obj = JSON.parse(response);
+                        var names = [];
                         for (var j = 0; j < response_obj.length; j++) {
                             var response_names = response_obj[j].name;
-                            names.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_names + '" name ="car_problem" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' + '<span class="problem_name">' + response_names + '</span>' + '</div>');
+                            names.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_names +
+                                '" name ="car_problem" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
+                                '<span class="problem_name">' + response_names + '</span>' + '</div>');
                         }
                         $("#addr").html(names.join(""));
 
@@ -57,7 +59,8 @@
                             if(this.checked)
                                 sList.push(this.id);
                         });
-                        console.log (sList);
+                        var string_sList = JSON.stringify(sList);
+                        alert (string_sList);
 
                     });
                 });
@@ -134,7 +137,7 @@
     <input id="reasons_with_symptoms" type="submit" value="Reasons with symptoms"/>
 </div>
 
-<form id="output_one" class="output_one" method="get">
+<form action="output.html" id="output_one" class="output_one" method="get">
     <div class="main_div" id="main_div">
         <div class="main_reasons_div">
             <div class="reasons_div" id="reasons_div">

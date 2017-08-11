@@ -27,7 +27,7 @@
 	</div>
 	<div class="problem_solutions_body">
 		<div class="problem_solutions_body_left">
-			<span id="abc"></span><br>
+			<p id="demo"></p>
 			<span>sasas</span><br>
 			<span>dsdsdsd</span><br>
 			<span>sasasasa</span>
@@ -45,7 +45,79 @@
 
 <script>
 
-	function getQueryParams(name) {
+     $.ajax({
+                    url: '/nodes',
+                    //data: $('form').serialize(),
+                    type: 'GET',
+                    success: function (response) {
+                        //alert(response);
+                        var response_obj = JSON.parse(response);
+                        var ids = [];
+                        for (var j = 0; j < response_obj.length; j++) {
+                            var response_ids = response_obj[j].id;
+                            ids.push(response_ids);
+                        }
+                        //alert(ids[5]);
+                        //var string_ids = JSON.stringify(ids);
+                        //alert (string_ids);
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+
+
+
+     $.ajax({
+             url:'/allpred',
+             type:'POST',
+             contentType: "application/json",
+             dataType: 'json',
+             data: JSON.stringify({"evidence":[1,2]}),
+            //data: JSON.stringify({"evidence":[1,2]}, ['prob_name']),
+            //stringify(value[, replacer[, space]])
+             //data: { "evidence":[1,2]},
+
+             success: function(data) {
+                 //response = $.parseJSON(data);
+                 console.log(data);
+                 var myvalue = data;
+                 document.getElementById("demo").innerHTML = myvalue;
+                 /*for (property in data) {
+                    output += property + ': ' + data[property]+'; ';
+                 }
+                 console.log(output);*/
+             },
+
+             error: function (error) {
+                        console.log(error);
+                    }
+     });
+
+
+     $.ajax({
+
+             url:'/pred',
+             type:'POST',
+             contentType: "application/json",
+             dataType: 'json',
+             data: JSON.stringify(
+                 {
+                     "evidence":[1,2],
+                     "query": [3,4]
+                 }),
+             success: function(data) {
+                 console.log(data);
+                 //alert(data);
+             },
+
+             error: function (error) {
+                        console.log(error);
+                    }
+                });
+
+	/*function getQueryParams(name) {
    qs = location.search;
 
    var params = [];
@@ -63,7 +135,7 @@
 var tasnia = getQueryParams('car_problem');
 alert(tasnia);
 
-	/*urlParam = function(name){
+	urlParam = function(name){
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 		if (results==null){
 		   return null;
