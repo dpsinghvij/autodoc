@@ -16,6 +16,7 @@
 	font-size: 20px;
     font-weight: 300;
     line-height: 28px;
+	text-transform: capitalize;
 }
 input[type=submit]
 {
@@ -61,8 +62,31 @@ input[type=button]
 }
 .reasons_div
 {
-	float: left;
-	width: 48%;
+	margin: auto;
+	width: 40%;
+	height: 575px;
+  	padding:3px 10px;
+    background:#0173bd;
+}
+.select_problem_dropdown
+{
+	font-size: 32px;
+	color: white;
+	font-weight: 100;
+	text-align: center;
+}
+.select_symptom_dropdown
+{
+	font-size: 32px;
+	color: white;
+	font-weight: 100;
+	text-align: center;
+}
+#addr
+{
+	height:450px;
+    overflow:auto;
+    background:#fff;
 }
 #result
 {
@@ -90,15 +114,23 @@ input[type=button]
 .main_body_reasons
 {
 	overflow: hidden;
+	float: left;
+	width:48%;
 }
 .main_body_symptoms
 {
 	overflow: hidden;
+	height: 575px;
+  	padding:3px 10px;
+    background:#0173bd;
+	width: 48%;
+	float: right;
 }
 .symptoms_div
 {
-	float: left;
-	width: 48%;
+	height:450px;
+    overflow:auto;
+    background:#fff;
 }
 #result_three
 {
@@ -170,3 +202,15 @@ input[type=button]
 		font-size: 16px;
 		color: #333;
 	}
+	.evidence_div
+{
+	height: 575px;
+  	padding:3px 10px;
+    background:#0173bd;
+}
+#addr_one
+{
+	height:450px;
+    overflow:auto;
+    background:#fff;
+}
