@@ -27,20 +27,25 @@ def get_preds():
     evidenceList = []
     for req in requestdata["evidence"]:
         evidenceList.append(req)
-
-    return bayesnet.getAllProbabilities(evidenceList)
+    heuristic= ""
+    if "heuristic" in requestdata:
+        heuristic= requestdata["heuristic"]
+    return bayesnet.getAllProbabilities(evidenceList,heuristic)
 
 
 @app.route('/pred', methods=['POST'])
 def get_single_pred():
     requestdata = request.get_json()
     evidence_list = []
+    heuristic = ""
+    if "heuristic" in requestdata:
+        heuristic = requestdata["heuristic"]
     for req in requestdata["evidence"]:
         evidence_list.append(req)
     query_list= []
     for q in requestdata["query"]:
         query_list.append(q)
-    return bayesnet.getAskedProbability(evidence_list,query_list)
+    return bayesnet.getAskedProbability(evidence_list,query_list,heuristic)
 
 
 if __name__ == '__main__':
