@@ -83,8 +83,9 @@ class BayesModel:
             elimination_order = MinWeight(self.model).get_elimination_order(elimination_order)
         elif(algo=='min_neighbor'):
             elimination_order = MinNeighbours(self.model).get_elimination_order(elimination_order)
-        else:
+        elif(algo=='weighted_min_fill'):
             elimination_order = WeightedMinFill(self.model).get_elimination_order(elimination_order)
+
         return elimination_order
 
 
