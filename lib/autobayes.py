@@ -8,7 +8,7 @@ from pgmpy.inference import VariableElimination
 from itertools import product
 from pgmpy.inference.EliminationOrder import MinFill, WeightedMinFill, MinWeight, MinNeighbours
 from pgmpy.extern import six
-
+import time
 from lib.factorout import FactorDisp, FactorWithName
 
 
@@ -29,7 +29,7 @@ class BayesModel:
         self.data = data
 
     def getAllProbabilities(self,evidences,algorithm= 'min_fill'):
-
+        oldmillis = int(round(time.time() * 1000))
         user_evidence= []
         for evidence in evidences:
             user_evidence.append(self.get_name_from_id(evidence))
@@ -50,6 +50,8 @@ class BayesModel:
                     print(ordering)
                     q = self.infer.query(variables=[nodes[j]], evidence={user_evidence[i]: 1}, elimination_order=ordering)
                     output.append(FactorWithName(nodes[j], self.convertFactorToDict(q[nodes[j]])))
+        millis = int(round(time.time() * 1000))-oldmillis
+       # output.append(millis/1000)
         return json.dumps(output,default=self.obj_dict)
 
     # function for getting the CPDs for selected nodes with
@@ -77,6 +79,7 @@ class BayesModel:
         elimination_order = list(set(self.infer.variables) -
                                  set(variables) -
                                  set(evidence.keys() if evidence else []))
+        algo=algo.lower()
         if(algo=='min_fill'):
             elimination_order= MinFill(self.model).get_elimination_order(elimination_order)
         elif(algo=='min_weight'):
