@@ -20,6 +20,9 @@ def output():
 def get_nodes():
     return jsonpickle.encode(dataa.getNodes(), unpicklable=False)
 
+@app.route('/childnodes')
+def get_child_nodes():
+    return jsonpickle.encode(dataa.getChildNodes(), unpicklable=False)
 
 @app.route('/allpred', methods=['POST'])
 def get_preds():
