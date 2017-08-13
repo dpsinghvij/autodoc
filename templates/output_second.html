@@ -106,7 +106,7 @@
                 for (var i = 0; i < data["length"]; i++) {
 
                     for (var j = 0; j < data[i].factordisp["length"]; j++) {
-                        var factordisp_value = data[i].factordisp[j].value;
+                        var factordisp_value = data[i].factordisp[j].value * 100;
                         var factordisp_factors = data[i].prob_name;
                         factors_Value.push('<span id="single_factors_value">' + factordisp_value + ' %' + '</span><br>');
                         factors_Name.push('<span id="single_factors_name">' + factordisp_factors + '</span><br>');
