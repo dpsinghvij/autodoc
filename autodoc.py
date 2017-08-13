@@ -10,11 +10,15 @@ bayesnet = BayesModel(dataa)
 
 @app.route('/')
 def index():
-    return render_template('index1.html')
+    return render_template('index.html')
 
 @app.route('/output.html')
 def output():
     return render_template('output.html')
+
+@app.route('/output_second.html')
+def result():
+    return render_template('output_second.html')
 
 @app.route('/nodes')
 def get_nodes():

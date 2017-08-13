@@ -26,17 +26,11 @@
 
 	</div>
 	<div class="problem_solutions_body">
-		<div class="problem_solutions_body_left">
-			<p id="demo"></p>
-			<span>sasas</span><br>
-			<span>dsdsdsd</span><br>
-			<span>sasasasa</span>
+		<div id="factors_name" class="problem_solutions_body_left">
 		</div>
 
-		<div class="problem_solutions_body_right">
-			<span>0.65</span><br>
-			<span>0.15</span><br>
-			<span>0.2</span>
+		<div id ="factor_value" class="problem_solutions_body_right">
+
 		</div>
 	</div>
 </div>
@@ -45,80 +39,11 @@
 
 <script>
 
-     $.ajax({
-                    url: '/nodes',
-                    //data: $('form').serialize(),
-                    type: 'GET',
-                    success: function (response) {
-                        //alert(response);
-                        var response_obj = JSON.parse(response);
-                        var ids = [];
-                        for (var j = 0; j < response_obj.length; j++) {
-                            var response_ids = response_obj[j].id;
-                            ids.push(response_ids);
-                        }
-                        //alert(ids[5]);
-                        //var string_ids = JSON.stringify(ids);
-                        //alert (string_ids);
-
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
+    $( document ).ready(function() {
 
 
-
-     $.ajax({
-             url:'/allpred',
-             type:'POST',
-             contentType: "application/json",
-             dataType: 'json',
-             data: JSON.stringify({"evidence":[1,2]}),
-            //data: JSON.stringify({"evidence":[1,2]}, ['prob_name']),
-            //stringify(value[, replacer[, space]])
-             //data: { "evidence":[1,2]},
-
-             success: function(data) {
-                 //response = $.parseJSON(data);
-                 console.log(data);
-                 var myvalue = data;
-                 document.getElementById("demo").innerHTML = myvalue;
-                 /*for (property in data) {
-                    output += property + ': ' + data[property]+'; ';
-                 }
-                 console.log(output);*/
-             },
-
-             error: function (error) {
-                        console.log(error);
-                    }
-     });
-
-
-     $.ajax({
-
-             url:'/pred',
-             type:'POST',
-             contentType: "application/json",
-             dataType: 'json',
-             data: JSON.stringify(
-                 {
-                     "evidence":[1,2],
-                     "query": [3,4]
-                 }),
-             success: function(data) {
-                 console.log(data);
-                 //alert(data);
-             },
-
-             error: function (error) {
-                        console.log(error);
-                    }
-                });
-
-	/*function getQueryParams(name) {
-   qs = location.search;
+    function getQueryParams(name) {
+    qs = location.search;
 
    var params = [];
    var tokens;
@@ -132,24 +57,52 @@
 
    return params;
 }
-var tasnia = getQueryParams('car_problem');
-alert(tasnia);
 
-	urlParam = function(name){
-		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-		if (results==null){
-		   return null;
-		}
-		else{
-		   return decodeURI(results[1]) || 0;
-		}
-	}
-	alert(urlParam('car_problem'));
+    var getNodes = getQueryParams('car_problem');
 
-	$( document ).ready(function() {
-		console.log(urlParam('car_problem'));
-		$('#abc').text("The value of the problem is " + $.urlParam('car_problem'));
-	});*/
+    var obj_length = Object.keys(getNodes).length;
+    var nodeIds = "";
+    for(i=0;i<obj_length;i++)
+    {
+        nodeIds = nodeIds + getNodes[i] + ",";
+    }
+    nodeIds = nodeIds.substring(0, nodeIds.length-1);
+    nodeIds = '{"evidence":'+ '[' + nodeIds + ']}' ;
+    //console.log(nodeIds);
+
+      $.ajax({
+
+             url:'/allpred',
+             type:'POST',
+             contentType: "application/json",
+             dataType: 'json',
+             data: nodeIds,
+
+             success: function(data) {
+                 var factors_Value =[];
+                 var factors_Name = [];
+                 for(var i=0;i<data["length"]; i++){
+
+                    for(var j=0;j< data[i].factordisp["length"]; j++){
+                        var factordisp_value = data[i].factordisp[j].value;
+                        var factordisp_factors = data[i].factordisp[j].factors;
+                        factors_Value.push('<span id="single_factors_value">' + factordisp_value + '</span><br>' );
+                        factors_Name.push('<span id="single_factors_name">' + factordisp_factors + '</span><br>' );
+                        //document.getElementById("factor_value").innerHTML = factordisp_value;
+                    }
+
+                 }
+                 $("#factor_value").html(factors_Value.join(""));
+                 $("#factors_name").html(factors_Name.join(""));
+
+             },
+
+             error: function (error) {
+                        console.log(error);
+             }
+     });
+      });
+
  </script>
 
 </html>

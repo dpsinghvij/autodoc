@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2 class="output_header">Possible Problems</h2>
+
+<h3 class="output_sub_header">Here's what may be causing your car problems. Learn more before you start troubleshooting</h3>
+
+
+<div class="problem_solutions">
+	<div class="problem_solutions_header">
+
+		<div class="problem_solutions_one">
+			<span class="span_problems">Problems</span>
+		</div>
+
+		<div class="problem_solutions_two">
+			<span class="span_problems">Probabilities</span>
+		</div>
+
+	</div>
+	<div class="problem_solutions_body">
+		<div id="factors_name" class="problem_solutions_body_left">
+		</div>
+
+		<div id ="factor_value" class="problem_solutions_body_right">
+
+		</div>
+	</div>
+</div>
+
+</body>
+
+<script>
+
+    $( document ).ready(function() {
+
+        function getQueryParams(name) {
+            qs = location.search;
+
+            var params = [];
+            var tokens;
+            var re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                if (decodeURIComponent(tokens[1]) == name)
+                    params.push(decodeURIComponent(tokens[2]));
+            }
+
+            return params;
+        }
+
+        var getEvidence = getQueryParams('evidence');
+        var obj_length = Object.keys(getEvidence).length;
+        var nodeIds = "";
+        for(i=0;i<obj_length;i++)
+        {
+            nodeIds = nodeIds + getEvidence[i] + ",";
+        }
+        nodeIds = nodeIds.substring(0, nodeIds.length-1);
+
+
+        var getQuery = getQueryParams('query');
+        var query_length = Object.keys(getQuery).length;
+        var queryIds = "";
+        for(i=0;i<query_length;i++)
+        {
+            queryIds = queryIds + getQuery[i] + ",";
+        }
+        queryIds = queryIds.substring(0, queryIds.length-1);
+
+
+        var evidence_queryIds = '{"evidence":'+ '[' + nodeIds + ']' + ',' + '"query":'+ '[' + queryIds + ']}' ;
+
+        //console.log(evidence_queryIds);
+
+        /*console.log(JSON.stringify(
+                {
+                    "evidence": [1, 2],
+                    "query": [3, 4]
+                }));*/
+
+        $.ajax({
+
+            url: '/pred',
+            type: 'POST',
+            contentType: "application/json",
+            dataType: 'json',
+            /*data: JSON.stringify(
+                {
+                    "evidence": [1, 2],
+                    "query": [3, 4]
+                }),*/
+            data: evidence_queryIds,
+            success: function (data) {
+                //console.log(data);
+                //alert(data);
+                var factors_Value = [];
+                var factors_Name = [];
+                for (var i = 0; i < data["length"]; i++) {
+
+                    for (var j = 0; j < data[i].factordisp["length"]; j++) {
+                        var factordisp_value = data[i].factordisp[j].value;
+                        var factordisp_factors = data[i].factordisp[j].factors;
+                        factors_Value.push('<span id="single_factors_value">' + factordisp_value + '</span><br>');
+                        factors_Name.push('<span id="single_factors_name">' + factordisp_factors + '</span><br>');
+                        //document.getElementById("factor_value").innerHTML = factordisp_value;
+                    }
+
+                }
+                $("#factor_value").html(factors_Value.join(""));
+                $("#factors_name").html(factors_Name.join(""));
+            },
+
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+ </script>
+
+</html>

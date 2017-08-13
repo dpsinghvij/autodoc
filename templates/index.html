@@ -1,82 +1,146 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <script>
-        $(function() {
-        $('#reasons').click(function() {
+        $(function () {
+            $('#reasons').click(function () {
 
-            $.ajax({
-                url: '/nodes',
-                data: $('form').serialize(),
-                type: 'GET',
-                success: function(response){
-                    //console.log(response);
-                    //$('#addr').text("Nodes: " +response);
-                    //alert(typeof response)
-                    var response_obj = JSON.parse(response)
-                    //alert(typeof response_obj)
-                    var names = []
-				    for (var j = 0; j < response_obj.length; j++){
-  					    //alert(response_obj[j].isSymptom);
-                        //alert(response_obj[j].id)
-                        //('#addr').text(names);
-                        var response_names = response_obj[j].name;
-                        names.push('<div class="problem_name_div">'+'<input type="checkbox" class="car_problem" value="'+response_names+'" id="'+j+'">' + '<span class="problem_name">' + response_names + '</span>'+'</div>');
+                $("#main_div").toggle();
+                $("#main_header").hide();
 
-						$("#addr").html(names.join(""));
-                        //names.push(response_names);
-                        //document.write(response_names)
-                        //document.getElementById("addr").innerHTML = "<div>"+ response_names +"</div>";
+                $.ajax({
+                    url: '/nodes',
+                    //data: $('form').serialize(),
+                    type: 'GET',
+                    success: function (response) {
+                        var response_obj = JSON.parse(response);
+                        var names = [];
+                        for (var j = 0; j < response_obj.length; j++) {
+                            var response_names = response_obj[j].name;
+                            names.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_names +
+                                '" name ="car_problem" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
+                                '<span class="problem_name">' + response_names + '</span>' + '</div>');
+                        }
+                        $("#addr").html(names.join(""));
 
-				    }
-				    /*for(var i=0;i<response_obj.length;i++)
-                        {
-		                 //document.getElementById('addr').innerHTML=document.getElementById('addr').innerHTML+"<div class='problem_name_div'>"+"<input class='car_problem_choice' value='"+response_names+"' type='checkbox' id='"+i+"'>"+"<span class='problem_name'>"+response_names+"</span>"+"</div>";
-		                }*/
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
 
-				},
-                error: function(error){
-                    console.log(error);
-                }
+                $('#save_value').click(function () {
+                    var sel = $('input[type=checkbox]:checked').map(function (_, el) {
+                        return $(el).attr('abc');
+                    }).get();
+
+                    var list = "";
+                    for (i = 0; i < sel.length; i++) {
+                        list += "<li>" + sel[i] + "</li>";
+                    }
+                    $("#result").append(list);
+                })
+
+                $(function () {
+                    // When your submit button is clicked
+                    $("#output_one").submit(function (e) {
+                        // If it is not checked, prevent the default behavior (your submit)
+                        if (!$('input[name="car_problem"]').is(':checked')) {
+                            alert("Please ensure a Car Problem is selected!");
+                            e.preventDefault();
+                        }
+
+                        /*var sList=[];
+                        $('input[type=checkbox]').each(function () {
+                           // var sThisVal = (this.checked ? "1" : "0");
+                            if(this.checked)
+                                sList.push(this.id);
+                        });
+                        var string_sList = JSON.stringify(sList);
+                        alert (string_sList);*/
+
+                    });
+                });
+
             });
 
-        });
-        $('#reasons_with_symptoms').click(function() {
+            $('#reasons_with_symptoms').click(function () {
 
-            $.ajax({
-                url: '/nodes',
-                data: $('form').serialize(),
-                type: 'GET',
-                success: function(response){
-                    var response_obj = JSON.parse(response)
-                    var names = [];
-                    var symptoms =[];
-				    for (var j = 0; j < response_obj.length; j++){
-                        var response_names = response_obj[j].name;
-                        names.push('<div class="problem_name_div">'+'<input type="checkbox" class="car_problem" value="'+response_names+'" id="'+j+'">' + '<span class="problem_name">' + response_names + '</span>'+'</div>');
-						$("#addr_one").html(names.join(""));
+                $("#reasons_symptoms").toggle();
+                $("#main_header").hide();
 
-                        var response_symptoms = response_obj[j].isSymptom;
-                        symptoms.push('<div class="symptoms_name_div">'+'<input type="checkbox" class="car_problem_symptoms" value="'+response_symptoms+'" id="'+j+'">' + '<span class="symptoms_name">' + response_symptoms + '</span>'+'</div>');
-						$("#symptoms_div").html(symptoms.join(""));
-				    }
-				    /*for(var i=0;i<response_obj.length;i++)
-                        {
-		                 document.getElementById('addr_one').innerHTML=document.getElementById('addr_one').innerHTML+"<div class='problem_name_div'>"+"<input name='car_problem' value='"+response_names+"' type='checkbox' id='"+i+"'>"+"<span class='problem_name'>"+response_names+"</span>"+"</div>";
-		                 document.getElementById('symptoms_div').innerHTML=document.getElementById('symptoms_div').innerHTML+"<div class='symptoms_name_div'>"+"<input name='car_problem_symptoms' value='"+response_symptoms+"' type='checkbox' id='"+i+"'>"+"<span class='symptoms_name'>"+response_symptoms+"</span>"+"</div>";
-                        }*/
+                $.ajax({
+                    url: '/nodes',
+                    //data: $('form').serialize(),
+                    type: 'GET',
+                    success: function (response) {
+                        var response_obj = JSON.parse(response)
+                        var names = [];
+                        var symptoms = [];
+                        for (var j = 0; j < response_obj.length; j++) {
+                            var response_names = response_obj[j].name;
+                            names.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_names +
+                                '" name ="evidence" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
+                                '<span class="problem_name">' + response_names + '</span>' + '</div>');
 
-				},
-                error: function(error){
-                    console.log(error);
-                }
+                            var response_symptoms = response_obj[j].isSymptom;
+                            symptoms.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_symptoms +
+                                '" name ="query" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
+                                '<span class="problem_name">' + response_symptoms + '</span>' + '</div>');
+
+
+
+                            //symptoms.push('<div class="symptoms_name_div">' + '<input type="checkbox" class="car_problem_symptoms" value="' + response_symptoms + '" id="' + j + '">' + '<span class="symptoms_name">' + response_symptoms + '</span>' + '</div>');
+                        }
+                        $("#addr_one").html(names.join(""));
+                        $("#symptoms_div").html(symptoms.join(""));
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+
+                $(function () {
+                    // When your submit button is clicked
+                    $("#output_two").submit(function (e) {
+                        // If it is not checked, prevent the default behavior (your submit)
+                        if (!$('input[name="evidence"],[name="query"]').is(':checked')) {
+                            alert("Please ensure a Car Problem and Symptoms is selected!");
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                $('#save_value_two').click(function () {
+                    var abc = $('#reasons_div input[type=checkbox]:checked').map(function (_, el) {
+                        return $(el).attr('abc');
+                    }).get();
+
+                    var list = "";
+                    for (i = 0; i < abc.length; i++) {
+                        list += "<li>" + abc[i] + "</li>";
+                    }
+                    $("#result_two").append(list);
+                })
+
+                $('#save_value_three').click(function () {
+                    var tas = $('#symptoms_div input[type=checkbox]:checked').map(function (_, el) {
+                        return $(el).attr('abc');
+                    }).get();
+
+                    var list = "";
+                    for (i = 0; i < tas.length; i++) {
+                        list += "<li>" + tas[i] + "</li>";
+                    }
+                    $("#result_three").append(list);
+                })
+
             });
-
         });
-    });
     </script>
 
 </head>
@@ -85,99 +149,50 @@
 
 
 <div id="main_header">
-	<h2 class="select_problem">What's Wrong With Your Vehicle?</h2>
-	<input id="reasons" type="button" value="Reasons" />
+    <h2 class="select_problem">What's Wrong With Your Vehicle?</h2>
+    <input id="reasons" type="button" value="Reasons"/>
 
-	<input id="reasons_with_symptoms"type="submit" value="Reasons with symptoms" />
+    <input id="reasons_with_symptoms" type="submit" value="Reasons with symptoms"/>
 </div>
 
-<div class="main_div" id="main_div">
-	<div class="main_reasons_div">
-		<div class="reasons_div" id="reasons_div">
-            <div id="addr"></div>
-            <input type="button" id="save_value" name="save_value" value="Save" />
-		</div>
-		<div id="result"></div>
-	</div>
-	<div class="main_div_next">
-		<input type="submit" value="Next" />
-	</div>
-</div>
+<form action="output.html" id="output_one" class="output_one" method="get">
+    <div class="main_div" id="main_div">
+        <div class="main_reasons_div">
+            <div class="reasons_div" id="reasons_div">
+                <h2 class="select_problem_dropdown">The Problems</h2>
+                <div id="addr"></div>
+                <!--<input type="button" id="save_value" name="save_value" value="Save"/>-->
+            </div>
+            <!--<div id="result"></div>-->
+        </div>
+        <div class="main_div_next">
+            <input type="submit" value="Next"/>
+        </div>
+    </div>
+</form>
 
-<div id="reasons_symptoms" class="reasons_symptoms">
-		<div class="main_body_reasons" id="main_body_reasons">
-			<div class="reasons_div" id="reasons_div">
-            <div id="addr_one"></div>
-            <input type="button" id="save_value_two" name="save_value" value="Save" />
-		</div>
-			<div id="result_two"></div>
-		</div>
-		<div class="main_body_symptoms" id="main_body_symptoms">
-			<div class="symptoms_div" id="symptoms_div"></div>
-			<input type="button" id="save_value_three" name="save_value" value="Save" />
-			<div id="result_three"></div>
-		</div>
-		<div class="reasons_symptoms_next">
-			<input type="submit" value="Next" />
-		</div>
-	</div>
+<form action="output_second.html" method="get" id="output_two" class="output_two">
+    <div id="reasons_symptoms" class="reasons_symptoms">
+        <div class="main_body_reasons" id="main_body_reasons">
+            <div class="evidence_div" id="evidence_div">
+                <h2 class="select_problem_dropdown">The Problems</h2>
+                <div id="addr_one"></div>
+                <!--<input type="button" id="save_value_two" name="save_value" value="Save"/>-->
+            </div>
+            <!--<div id="result_two"></div>-->
+        </div>
+        <div class="main_body_symptoms" id="main_body_symptoms">
+            <h2 class="select_symptom_dropdown">The Symptoms</h2>
+            <div class="symptoms_div" id="symptoms_div"></div>
+            <!--<input type="button" id="save_value_three" name="save_value" value="Save"/>-->
+            <!--<div id="result_three"></div>-->
+        </div>
+        <div class="reasons_symptoms_next">
+            <input type="submit" value="Next"/>
+        </div>
+    </div>
+</form>
 
 </body>
-
-<script>
-
-    $(document).ready(
-    function() {
-        $("#reasons").click(function() {
-            $("#main_div").toggle();
-			$("#main_header").hide();
-        });
-    });
-$(document).ready(
-    function() {
-        $("#reasons_with_symptoms").click(function() {
-            $("#reasons_symptoms").toggle();
-			$("#main_header").hide();
-        });
-    });
-
-$('#save_value').click(function() {
-    var sel = $('input[type=checkbox]:checked').map(function(_, el) {
-        return $(el).val();
-    }).get();
-
-	 var list = "";
-        for(i=0; i<sel.length; i++){
-        list +="<li>"+sel[i]+"</li>";
-        }
-    $("#result").append(list);
-})
-
-$('#save_value_two').click(function() {
-    var abc = $('#reasons_div input[type=checkbox]:checked').map(function(_, el) {
-        return $(el).val();
-    }).get();
-
-	 var list = "";
-        for(i=0; i<abc.length; i++){
-        list +="<li>"+abc[i]+"</li>";
-        }
-    $("#result_two").append(list);
-})
-
-$('#save_value_three').click(function() {
-    var tas = $('#symptoms_div input[type=checkbox]:checked').map(function(_, el) {
-        return $(el).val();
-    }).get();
-
-	 var list = "";
-        for(i=0; i<tas.length; i++){
-        list +="<li>"+tas[i]+"</li>";
-        }
-    $("#result_three").append(list);
-})
-
-
-</script>
 
 </html>
