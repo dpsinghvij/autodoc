@@ -64,7 +64,7 @@ input[type=button]
 {
 	margin: auto;
 	width: 40%;
-	height: 575px;
+	height: 500px;
   	padding:3px 10px;
     background:#0173bd;
 }
@@ -84,7 +84,7 @@ input[type=button]
 }
 #addr
 {
-	height:450px;
+	height:390px;
     overflow:auto;
     background:#fff;
 }
@@ -114,13 +114,11 @@ input[type=button]
 .main_body_reasons
 {
 	overflow: hidden;
-	float: left;
-	width:48%;
 }
 .main_body_symptoms
 {
 	overflow: hidden;
-	height: 575px;
+	height: 520px;
   	padding:3px 10px;
     background:#0173bd;
 	width: 48%;
@@ -128,7 +126,7 @@ input[type=button]
 }
 .symptoms_div
 {
-	height:450px;
+	height:400px;
     overflow:auto;
     background:#fff;
 }
@@ -204,13 +202,20 @@ input[type=button]
 	}
 	.evidence_div
 {
-	height: 575px;
+	height: 520px;
   	padding:3px 10px;
     background:#0173bd;
+		float: left;
+	width:48%;
 }
 #addr_one
 {
-	height:450px;
+	height:400px;
     overflow:auto;
     background:#fff;
+}
+.heuristic_div
+{
+	text-align: center;
+	margin: 30px;
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>output</title>
+    <title>Probabilities</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -17,7 +17,7 @@
 	<div class="problem_solutions_header">
 
 		<div class="problem_solutions_one">
-			<span class="span_problems">Problems</span>
+			<span class="span_problems">Your Problems</span>
 		</div>
 
 		<div class="problem_solutions_two">
@@ -67,7 +67,10 @@
         nodeIds = nodeIds + getNodes[i] + ",";
     }
     nodeIds = nodeIds.substring(0, nodeIds.length-1);
-    nodeIds = '{"evidence":'+ '[' + nodeIds + ']}' ;
+
+    var getHeuristic = getQueryParams('heuristic');
+
+    nodeIds = '{"evidence":'+ '[' + nodeIds + ']' + ',' + '"heuristic":'+ '"' + getHeuristic + '"}' ;
     //console.log(nodeIds);
 
       $.ajax({
@@ -77,17 +80,23 @@
              contentType: "application/json",
              dataType: 'json',
              data: nodeIds,
+             /*data: JSON.stringify({
+                  "evidence":[1,2],
+                  "heuristic":"min_fill"
+                }),*/
 
              success: function(data) {
+                 console.log(data);
                  var factors_Value =[];
                  var factors_Name = [];
                  for(var i=0;i<data["length"]; i++){
 
                     for(var j=0;j< data[i].factordisp["length"]; j++){
                         var factordisp_value = data[i].factordisp[j].value;
-                        var factordisp_factors = data[i].factordisp[j].factors;
-                        factors_Value.push('<span id="single_factors_value">' + factordisp_value + '</span><br>' );
-                        factors_Name.push('<span id="single_factors_name">' + factordisp_factors + '</span><br>' );
+                        var factordisp_factors = data[i].prob_name;
+                        factors_Value.push('<span id="single_factors_value">' + factordisp_value + ' %' + '</span><br>' );
+                        factors_Name.push('<span id="single_factors_name">' + factordisp_factors + '</span><br>');
+
                         //document.getElementById("factor_value").innerHTML = factordisp_value;
                     }
 

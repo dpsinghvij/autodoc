@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Automobile Diagnosis System</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -79,24 +80,45 @@
                     success: function (response) {
                         var response_obj = JSON.parse(response)
                         var names = [];
-                        var symptoms = [];
+                        var query_names = [];
                         for (var j = 0; j < response_obj.length; j++) {
                             var response_names = response_obj[j].name;
-                            names.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_names +
-                                '" name ="evidence" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
+                            names.push('<div class="problem_name_div">' + '<input type="checkbox"  name ="evidence" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
                                 '<span class="problem_name">' + response_names + '</span>' + '</div>');
 
-                            var response_symptoms = response_obj[j].isSymptom;
-                            symptoms.push('<div class="problem_name_div">' + '<input type="checkbox" abc="' + response_symptoms +
-                                '" name ="query" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
-                                '<span class="problem_name">' + response_symptoms + '</span>' + '</div>');
+                            //var response_symptoms = response_obj[j].isSymptom;
+                            query_names.push('<div class="problem_name_div">' + '<input type="checkbox" name ="query" value="' + response_obj[j].id + '" id="' + response_obj[j].id + '">' +
+                                '<span class="problem_name">' + response_names + '</span>' + '</div>');
 
 
 
                             //symptoms.push('<div class="symptoms_name_div">' + '<input type="checkbox" class="car_problem_symptoms" value="' + response_symptoms + '" id="' + j + '">' + '<span class="symptoms_name">' + response_symptoms + '</span>' + '</div>');
                         }
                         $("#addr_one").html(names.join(""));
-                        $("#symptoms_div").html(symptoms.join(""));
+                        //$("#symptoms_div").html(query_names.join(""));
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+
+
+                $.ajax({
+                    url: '/childnodes',
+                    //data: $('form').serialize(),
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response);
+                        var response_childnodes = JSON.parse(response);
+                        var query_names = [];
+                        for (var k = 0; k < response_childnodes.length; k++) {
+                            var childnode_names = response_childnodes[k].name;
+                            query_names.push('<div class="problem_name_div">' + '<input type="checkbox" name ="query" value="' + response_childnodes[k].id + '" id="' + response_childnodes[k].id + '">' +
+                                '<span class="problem_name">' + childnode_names + '</span>' + '</div>');
+                            }
+
+                        $("#symptoms_div").html(query_names.join(""));
 
                     },
                     error: function (error) {
@@ -163,7 +185,15 @@
                 <div id="addr"></div>
                 <!--<input type="button" id="save_value" name="save_value" value="Save"/>-->
             </div>
-            <!--<div id="result"></div>-->
+            <div class="heuristic_div" id="heuristic_div">
+                <select class="heuristic" name="heuristic" id="heuristic">
+                    <option selected disabled>Choose one heuristic</option>
+                    <option value="min_fill">Min_Fill</option>
+                    <option value="min_weight">Min_Weight</option>
+                    <option value="min_neighbor">Min_Neighbor</option>
+                    <option value="weighted_min_fill">Weighted_Min_Fill</option>
+                </select>
+            </div>
         </div>
         <div class="main_div_next">
             <input type="submit" value="Next"/>
@@ -179,13 +209,22 @@
                 <div id="addr_one"></div>
                 <!--<input type="button" id="save_value_two" name="save_value" value="Save"/>-->
             </div>
+            <div class="main_body_symptoms" id="main_body_symptoms">
+                <h2 class="select_symptom_dropdown">The Symptoms</h2>
+                <div class="symptoms_div" id="symptoms_div"></div>
+                <!--<input type="button" id="save_value_three" name="save_value" value="Save"/>-->
+                <!--<div id="result_three"></div>-->
+            </div>
             <!--<div id="result_two"></div>-->
         </div>
-        <div class="main_body_symptoms" id="main_body_symptoms">
-            <h2 class="select_symptom_dropdown">The Symptoms</h2>
-            <div class="symptoms_div" id="symptoms_div"></div>
-            <!--<input type="button" id="save_value_three" name="save_value" value="Save"/>-->
-            <!--<div id="result_three"></div>-->
+        <div class="heuristic_div" id="heuristic_div">
+                <select class="heuristic" name="heuristic" id="heuristic">
+                    <option selected disabled>Choose one heuristic</option>
+                    <option value="min_fill">Min_Fill</option>
+                    <option value="min_weight">Min_Weight</option>
+                    <option value="min_neighbor">Min_Neighbor</option>
+                    <option value="weighted_min_fill">Weighted_Min_Fill</option>
+                </select>
         </div>
         <div class="reasons_symptoms_next">
             <input type="submit" value="Next"/>
