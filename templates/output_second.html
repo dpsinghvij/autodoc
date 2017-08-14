@@ -41,6 +41,7 @@
 
     $( document ).ready(function() {
 
+        //function for getting url parameters
         function getQueryParams(name) {
             qs = location.search;
 
@@ -57,6 +58,9 @@
         }
 
         var getEvidence = getQueryParams('evidence');
+        var getQuery = getQueryParams('query');
+
+        //converting object type parameter to string type
         var obj_length = Object.keys(getEvidence).length;
         var nodeIds = "";
         for(i=0;i<obj_length;i++)
@@ -65,8 +69,7 @@
         }
         nodeIds = nodeIds.substring(0, nodeIds.length-1);
 
-
-        var getQuery = getQueryParams('query');
+        //converting object type parameter to string type
         var query_length = Object.keys(getQuery).length;
         var queryIds = "";
         for(i=0;i<query_length;i++)
@@ -86,6 +89,7 @@
                     "query": [3, 4]
                 }));*/
 
+        //calling webservice process
         $.ajax({
 
             url: '/pred',
