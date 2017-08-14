@@ -34,7 +34,7 @@ class BayesModel:
         for evidence in evidences:
             user_evidence.append(self.get_name_from_id(evidence))
         #print(user_evidence)
-        evidence_dict={key:1 for key in user_evidence}
+        #evidence_dict={key:1 for key in user_evidence}
         for i in range(len(user_evidence)):
             activeTrailNodes = self.model.active_trail_nodes(user_evidence[i])
             #print(activeTrailNodes)
@@ -46,10 +46,10 @@ class BayesModel:
                 #print(nodes[j])
 
                 if nodes[j] != user_evidence[i]:
-                    ordering = self.get_elimination_order([nodes[j]],evidence_dict,algo= algorithm)
+                    ordering = self.get_elimination_order([nodes[j]],{user_evidence[i]: 1},algo= algorithm)
                     print(ordering)
-                    q = self.infer.query(variables=[nodes[j]], evidence=evidence_dict, elimination_order=ordering)
-                    output.append(FactorWithName(nodes[j], self.convertFactorToDict(q[nodes[j]])))
+                    q = self.infer.query(variables=[nodes[j]], evidence={user_evidence[i]: 1}, elimination_order=ordering)
+                    output.append(FactorWithName(nodes[j], self.convertFactorToDict(q[nodes[j]],user_evidence[i])))
         millis = int(round(time.time() * 1000))-oldmillis
        # output.append(millis/1000)
         return json.dumps(output,default=self.obj_dict)
@@ -60,17 +60,17 @@ class BayesModel:
         output = []
         for evidence in evidences:
             user_evidence.append(self.get_name_from_id(evidence))
-        evidence_dict = {key: 1 for key in user_evidence}
+        #evidence_dict = {key: 1 for key in user_evidence}
         query_variable=[]
         for query in queries:
             query_variable.append(self.get_name_from_id(query))
 
         for i in range(len(user_evidence)):
             for j in range(len(query_variable)):
-                ordering = self.get_elimination_order([query_variable[j]], evidence_dict, algo=algorithm)
+                ordering = self.get_elimination_order([query_variable[j]], {user_evidence[i]: 1}, algo=algorithm)
                 print(ordering)
-                q = self.infer.query(variables=[query_variable[j]], evidence=evidence_dict, elimination_order=ordering)
-                output.append(FactorWithName(query_variable[j], self.convertFactorToDict(q[query_variable[j]])))
+                q = self.infer.query(variables=[query_variable[j]], evidence={user_evidence[i]: 1}, elimination_order=ordering)
+                output.append(FactorWithName(query_variable[j], self.convertFactorToDict(q[query_variable[j]],user_evidence[i])))
 
         return json.dumps(output, default=self.obj_dict)
 
@@ -340,7 +340,7 @@ class BayesModel:
     def obj_dict(self,obj):
         return obj.__dict__
 
-    def convertFactorToDict(self,factor):
+    def convertFactorToDict(self,factor,evidence):
         dic = {}
         string_header = list(map(lambda x: six.text_type(x), factor.scope()))
         string_header.append('{phi_or_p}({variables})'.format(phi_or_p="phi",
@@ -355,6 +355,6 @@ class BayesModel:
             # prob_list.append(factor.values.ravel()[value_index])
 
             # factor_table.append(prob_list)
-            factordisp.append(FactorDisp(prob_list, factor.values.ravel()[value_index]))
+            factordisp.append(FactorDisp(prob_list, factor.values.ravel()[value_index],evidence))
             value_index += 1
         return factordisp
