@@ -1,6 +1,6 @@
 import re
 
-
+#passing the object to UI
 class FactorDisp:
     def __init__(self,factors,value,evidence):
        self.factors= factors
@@ -15,6 +15,7 @@ class FactorDisp:
        else:
            self.statement = self.statement.format("", self.convert(evidence), name)
 
+    #evidence incorporate
     def add_evidence(self,evidence):
         self.evidence = evidence
         self.statement = "There is {} problem {} because of {}"
@@ -25,6 +26,7 @@ class FactorDisp:
         else:
             self.statement = self.statement.format("a", evidence,name)
 
+    #presenting the node names
     def convert(self,name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1 \2', name)
         return re.sub('([a-z0-9])([A-Z])', r'\1 \2', s1).lower()

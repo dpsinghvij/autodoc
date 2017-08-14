@@ -1,3 +1,4 @@
+#import all the libraries
 from random import *
 import csv
 from pgmpy.models import BayesianModel
@@ -11,9 +12,11 @@ import math
 
 CSV_FILE = "alldata.csv"
 
-
+#class for data learning and model implementation
 class DataLearning:
     def __init__(self):
+
+        #creating the bayesian model for data
         self.model_data = BayesianModel(
             [('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),
              ('noSpark', 'sparkPlug'),
@@ -42,6 +45,8 @@ class DataLearning:
 
 
     def create_mode(self):
+
+        #creating the bayesian model for expert
         self.model_expert = BayesianModel(
             [('cranksNormallyNotStarting', 'noFuelPressure'), ('cranksNormallyNotStarting', 'noSpark'),
              ('noSpark', 'sparkPlug'),
@@ -64,6 +69,9 @@ class DataLearning:
              ('highIdle', 'faultyFuelFilter'), ('highIdle', 'vacuumLeaks'), ('ignitionMisFire', 'engineTuneUp'),
              ('ignitionMisFire', 'sparkPlug'),
              ('ignitionMisFire', 'ignitionCoilForSpark')])
+
+
+        #CPD for root nodes
         cpd_carbueratorStalling = TabularCPD(variable='carbueratorStalling', variable_card=2, values=[[0.3, 0.7]])
 
         cpd_crankSlow = TabularCPD(variable='crankSlow', variable_card=2, values=[[0.4, 0.6]])
@@ -257,6 +265,7 @@ class DataLearning:
                                                         'ignitionMisFire'],
                                               evidence_card=[2, 2, 2, 2])
 
+        #assign CPDs into the model
         self.model_expert.add_cpds(cpd_carbueratorStalling, cpd_crankSlow, cpd_cranksNormallyNotStarting,
                               cpd_engineHesitation, cpd_engineMisFiring, cpd_engineVibration, cpd_highIdle,
                               cpd_idleFluctuates,
@@ -275,12 +284,14 @@ class DataLearning:
 
         self.model_expert.check_model()
 
+    #generate data file when the model is created
     def generate_data_file(self):
         path = self.getPathWithFileName(CSV_FILE)
         with open(path, 'w') as f:
             writer = csv.writer(f)
             writer.writerow((self.model_data.nodes()))
 
+    #write random binary data into the CSV file
     def add_data_to_file(self):
         path = self.getPathWithFileName(CSV_FILE)
         with open(path, 'w') as f:
@@ -293,39 +304,29 @@ class DataLearning:
                 a = csv.writer(f, quoting=csv.QUOTE_ALL)
                 a.writerow(data)
 
+    #bayesian estimator for learning CPDs from the user data
     def learn_from_data(self):
         data= pd.read_csv(self.getPathWithFileName(CSV_FILE))
         self.model_data.fit(data, estimator=BayesianEstimator, prior_type="BDeu")
 
+    #get path
     def getPathWithFileName(self, filename=""):
         return os.path.join(os.path.dirname(sys.argv[0]), filename)
 
-
+    #count the number of rows in the CSV file and group by nodes
     def get_lookup(self,node):
         meAndMyParents = list(self.model_data._get_ancestors_of(node))
         df = pd.read_csv(self.getPathWithFileName(CSV_FILE))
         if (len(meAndMyParents) == 1):
 
-            # print(model_data.get_cpds(allNodes[i]))
-            # print("root node:-", allNodes[i])
             df = df.groupby(meAndMyParents).agg({meAndMyParents[0]: 'count'})
-            # print("Group values: ", df.iloc[:,-1])
             dicValue = {'0': df.iloc[:, -1][0], '1': df.iloc[:, -1][1]}
-            # print(dicValue)
-            # print("Group values: ", df)
-            # print("\n")
 
         else:
             meAndMyParents.remove(node)
-            # print(model_data.get_cpds(allNodes[i]))
-            # print("child node:-", allNodes[i])
-            # print(meAndMyParents)
             df = df.groupby(meAndMyParents).agg({node: 'count'}).reset_index().rename(
                 columns={node: 'countsym'})
 
-            # for row in df.rows:
-            #    print(df[row])
-            # lookup=''.join(str(x) for x in np.asarray(df.iloc[:, :-1]))
             dicValue = {}
             for i in df.index:
 
@@ -338,6 +339,7 @@ class DataLearning:
                 print(dicValue)
         return dicValue
 
+    #learning function calculation
     def change_expert_for_data(self):
         for node in self.model_data.cpds:
             dic_value= self.get_lookup(node.variable)
