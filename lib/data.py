@@ -15,15 +15,7 @@ class Data:
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                self.nodes.append(BayesNodes(row[0], row[1], row[2]))
-
-        p = os.path.join(os.path.dirname(sys.argv[0]), filename)
-        print(p)
-        with open(p, 'r') as f:
-            reader = csv.reader(f)
-            next(reader)
-            for row in reader:
-                self.childnodes.append(BayesNodes(row[0], row[1], row[2]))
+                self.nodes.append(BayesNodes(row[0], row[1], int(row[2])))
 
         print("data is loaded")
 
@@ -31,4 +23,5 @@ class Data:
         return self.nodes
 
     def getChildNodes(self):
-        return self.nodes
+        childnodes= list(filter(lambda x: x.isSymptom == 0, self.nodes))
+        return childnodes
