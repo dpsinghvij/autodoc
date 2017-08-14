@@ -41,7 +41,7 @@
 
     $( document ).ready(function() {
 
-
+    //function for getting url parameters
     function getQueryParams(name) {
     qs = location.search;
 
@@ -60,6 +60,7 @@
 
     var getNodes = getQueryParams('car_problem');
 
+    //converting object type parameter to string type
     var obj_length = Object.keys(getNodes).length;
     var nodeIds = "";
     for(i=0;i<obj_length;i++)
@@ -73,6 +74,7 @@
     nodeIds = '{"evidence":'+ '[' + nodeIds + ']' + ',' + '"heuristic":'+ '"' + getHeuristic + '"}' ;
     //console.log(nodeIds);
 
+      //calling webservice process
       $.ajax({
 
              url:'/allpred',
