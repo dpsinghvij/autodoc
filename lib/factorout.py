@@ -8,12 +8,12 @@ class FactorDisp:
        self.statement=""
     
        split = factors[0].split('_')
-       self.statement="Probability that there is a problem because of {} is {}"
+       self.statement="Probability that there is {} problem because of {}"
        name= self.convert(split[0])
        if(split[1] == '0'):
-            self.statement= self.statement.format(name,value)
+            self.statement= self.statement.format("no",name)
        else:
-           self.statement = self.statement.format(name, value)
+           self.statement = self.statement.format("a",name)
 
     def convert(self,name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1 \2', name)
